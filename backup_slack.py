@@ -16,10 +16,10 @@ import slacker
 __version__ = '1.0.0'
 
 
-USERNAMES = 'users.json'
-DIRECT_MESSAGES = 'direct_messages'
-PUBLIC_CHANNELS = 'channels'
-PRIVATE_CHANNELS = 'private_channels'
+USERNAMES = 'backup/users.json'
+DIRECT_MESSAGES = 'backup/direct_messages'
+PUBLIC_CHANNELS = 'backup/channels'
+PRIVATE_CHANNELS = 'backup/private_channels'
 
 
 def mkdir_p(path):
@@ -194,8 +194,11 @@ class SlackHistory(object):
         """Returns a list of direct message threads."""
         threads = []
         for t in self.slack.im.list().body['ims']:
-            t['username'] = self.usernames[t['user']]
-            threads.append(t)
+            try:
+                t['username'] = self.usernames[t['user']]
+                threads.append(t)
+            except KeyError as err:
+                pass
         return threads
 
     def dm_thread_history(self, thread):
